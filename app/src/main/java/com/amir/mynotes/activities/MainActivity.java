@@ -1,14 +1,22 @@
 package com.amir.mynotes.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.loader.content.AsyncTaskLoader;
 
+import android.annotation.SuppressLint;
+import android.content.AsyncQueryHandler;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.amir.mynotes.R;
-import com.amir.mynotes.activities.CreateNoteActivity;
+import com.amir.mynotes.database.NotesDatabase;
+import com.amir.mynotes.entities.Note;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,5 +37,28 @@ public class MainActivity extends AppCompatActivity {
                         REQUEST_CODE_ADD_NOTE);
             }
         });
+
+        getNotes();
+    }
+
+    private void getNotes() {
+
+        @SuppressLint("StaticFieldLeak")
+        class GetNotesTask extends AsyncTask<Void, Void, List<Note>> {
+            @Override
+            protected List<Note> doInBackground(Void... voids) {
+                return NotesDatabase
+                        .getDatabase(getApplicationContext())
+                        .noteDao().getAllNotes();
+            }
+
+            @Override
+            protected void onPostExecute(List<Note> notes) {
+                super.onPostExecute(notes);
+                Log.d("MY_NOTES", notes.toString());
+            }
+        }
+
+        new GetNotesTask().execute();
     }
 }
