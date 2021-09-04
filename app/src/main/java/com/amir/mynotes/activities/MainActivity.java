@@ -2,6 +2,8 @@ package com.amir.mynotes.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.loader.content.AsyncTaskLoader;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.annotation.SuppressLint;
 import android.content.AsyncQueryHandler;
@@ -13,14 +15,20 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.amir.mynotes.R;
+import com.amir.mynotes.adapters.NotesAdapter;
 import com.amir.mynotes.database.NotesDatabase;
 import com.amir.mynotes.entities.Note;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE_ADD_NOTE = 1;
+
+    private RecyclerView notesRecyclerView;
+    private List<Note> noteList;
+    private NotesAdapter notesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +41,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivityForResult(
-                        new Intent( getApplicationContext(), CreateNoteActivity.class),
+                        new Intent(getApplicationContext(), CreateNoteActivity.class),
                         REQUEST_CODE_ADD_NOTE);
             }
         });
+
+        notesRecyclerView = findViewById(R.id.notesRecyclerView);
+        notesRecyclerView.setLayoutManager(
+                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        );
+
+        noteList = new ArrayList<>();
+        notesAdapter = new NotesAdapter(noteList);
+        notesRecyclerView.setAdapter(notesAdapter);
 
         getNotes();
     }
@@ -56,6 +73,14 @@ public class MainActivity extends AppCompatActivity {
             protected void onPostExecute(List<Note> notes) {
                 super.onPostExecute(notes);
                 Log.d("MY_NOTES", notes.toString());
+                if (noteList.size() == 0) {
+                    noteList.addAll(notes);
+                    notesAdapter.notifyDataSetChanged();
+                } else {
+                    noteList.add(0, notes.get(0));
+                    notesAdapter.notifyItemInserted(0);
+                }
+                notesRecyclerView.smoothScrollToPosition(0);
             }
         }
 
