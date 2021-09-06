@@ -17,7 +17,7 @@ public interface NoteDao {
     @Query("SELECT * FROM notes ORDER BY id DESC")
     List<Note> getAllNotes();
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     void insertNote(Note note);
 
     @Delete

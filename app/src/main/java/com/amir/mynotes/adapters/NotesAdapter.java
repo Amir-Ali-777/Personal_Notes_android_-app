@@ -23,14 +23,20 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 
     @NonNull
     @Override
-    public NotesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new NotesViewHolder(
+    public NotesAdapter.NotesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_container_note, parent, false);
+
+        NotesAdapter.NotesViewHolder viewHolder = new NotesAdapter.NotesViewHolder(view);
+        return viewHolder;
+
+        /**return new NotesViewHolder(
                 LayoutInflater.from(parent.getContext()).inflate(
                         R.layout.item_container_note,
                         parent,
                         false
                 )
-        );
+        );***/
     }
 
     @Override
@@ -48,7 +54,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         return position;
     }
 
-    static class NotesViewHolder extends RecyclerView.ViewHolder {
+    public static class NotesViewHolder extends RecyclerView.ViewHolder {
 
         TextView textTitle, textSubtitle, textDateTime;
 
@@ -66,7 +72,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             } else {
                 textSubtitle.setText(note.getSubtitle());
             }
-            textDateTime.setText(note.getDataTime());
+            if(note.getDataTime().trim().isEmpty()) {
+                textDateTime.setVisibility(View.GONE);
+            } else {
+               // textDateTime.setText(note.getDataTime());
+            }
+
         }
 
     }

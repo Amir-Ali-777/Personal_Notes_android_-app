@@ -1,7 +1,10 @@
 package com.amir.mynotes.activities;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.loader.content.AsyncTaskLoader;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -47,9 +50,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         notesRecyclerView = findViewById(R.id.notesRecyclerView);
-        notesRecyclerView.setLayoutManager(
-                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        );
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(6, StaggeredGridLayoutManager.HORIZONTAL);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
+        notesRecyclerView.setLayoutManager(staggeredGridLayoutManager);
 
         noteList = new ArrayList<>();
         notesAdapter = new NotesAdapter(noteList);
@@ -72,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(List<Note> notes) {
                 super.onPostExecute(notes);
-                Log.d("MY_NOTES", notes.toString());
+                //Log.d("MY_NOTES", notes.toString());
                 if (noteList.size() == 0) {
                     noteList.addAll(notes);
                     notesAdapter.notifyDataSetChanged();
@@ -85,5 +88,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         new GetNotesTask().execute();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_ADD_NOTE && resultCode == RESULT_OK) {
+            getNotes();
+        }
     }
 }
