@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         notesRecyclerView = findViewById(R.id.notesRecyclerView);
-        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(6, StaggeredGridLayoutManager.HORIZONTAL);
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         notesRecyclerView.setLayoutManager(staggeredGridLayoutManager);
 
