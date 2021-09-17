@@ -151,6 +151,10 @@ public class CreateNoteActivity extends AppCompatActivity {
             note.setWebLink(textWebURL.getText().toString());
         }
 
+        if(alreadyAvailableNote != null) {
+            note.setId(alreadyAvailableNote.getId());
+        }
+
         class SaveNoteTask extends AsyncTask<Void, Void, Void> {
 
             @Override
