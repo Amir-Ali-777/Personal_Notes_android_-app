@@ -11,6 +11,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -59,6 +60,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SELECT_IMAGE = 2;
 
     private AlertDialog dialogAddURL;
+    private AlertDialog dialogDeleteNote;
 
     private Note alreadyAvailableNote;
 
@@ -172,7 +174,7 @@ public class CreateNoteActivity extends AppCompatActivity {
             note.setWebLink(textWebURL.getText().toString());
         }
 
-        if(alreadyAvailableNote != null) {
+        if (alreadyAvailableNote != null) {
             note.setId(alreadyAvailableNote.getId());
         }
 
@@ -281,18 +283,18 @@ public class CreateNoteActivity extends AppCompatActivity {
             }
         });
 
-        if (alreadyAvailableNote != null &&alreadyAvailableNote.getColor() != null && !alreadyAvailableNote.getColor().trim().isEmpty()) {
+        if (alreadyAvailableNote != null && alreadyAvailableNote.getColor() != null && !alreadyAvailableNote.getColor().trim().isEmpty()) {
             switch (alreadyAvailableNote.getColor()) {
-                case "#FDBE3B" :
+                case "#FDBE3B":
                     layoutMiscellaneus.findViewById(R.id.viewColor2).performClick();
                     break;
-                case "#FF4842" :
+                case "#FF4842":
                     layoutMiscellaneus.findViewById(R.id.viewColor3).performClick();
                     break;
-                case "#3A52FC" :
+                case "#3A52FC":
                     layoutMiscellaneus.findViewById(R.id.viewColor4).performClick();
                     break;
-                case "#000000" :
+                case "#000000":
                     layoutMiscellaneus.findViewById(R.id.viewColor5).performClick();
                     break;
             }
@@ -323,6 +325,71 @@ public class CreateNoteActivity extends AppCompatActivity {
                 showAddURLDialog();
             }
         });
+
+        if (alreadyAvailableNote != null) {
+            layoutMiscellaneus.findViewById(R.id.layoutDeleteNote).setVisibility(View.VISIBLE);
+            layoutMiscellaneus.findViewById(R.id.layoutDeleteNote).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    showDeleteNoteDialog();
+                }
+            });
+        }
+
+    }
+
+    private void showDeleteNoteDialog() {
+        if(dialogDeleteNote == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(CreateNoteActivity.this);
+            View view = LayoutInflater.from(this).inflate(
+                    R.layout.layout_delete_note,
+                    (ViewGroup) findViewById(R.id.layoutDeleteNoteContainer)
+            );
+            builder.setView(view);
+            dialogDeleteNote = builder.create();
+            if(dialogDeleteNote.getWindow() != null){
+                dialogDeleteNote.getWindow().setBackgroundDrawable(new ColorDrawable());
+            }
+            view.findViewById(R.id.textDeleteNote).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    @SuppressLint("StaticFieldLeak")
+                    class DeleteNoteTask extends AsyncTask<Void, Void, Void>{
+
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            NotesDatabase.getDatabase(getApplicationContext()).noteDao()
+                                    .deleteNote(alreadyAvailableNote);
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Void unused) {
+                            super.onPostExecute(unused);
+                            Intent intent = new Intent();
+                            intent.putExtra("isNoteDeleted", true);
+                            setResult(RESULT_OK, intent);
+                            finish();
+                        }
+                    }
+
+                    new DeleteNoteTask().execute();
+
+                }
+            });
+
+            view.findViewById(R.id.textCancel).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialogDeleteNote.dismiss();
+                }
+            });
+        }
+
+        dialogDeleteNote.show();
+
     }
 
     private void setSubtitleIndicatorColor() {
@@ -390,7 +457,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     }
 
     private void showAddURLDialog() {
-        if(dialogAddURL == null) {
+        if (dialogAddURL == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(CreateNoteActivity.this);
             View view = LayoutInflater.from(this).inflate(
                     R.layout.layout_add_url,
@@ -398,8 +465,8 @@ public class CreateNoteActivity extends AppCompatActivity {
             );
             builder.setView(view);
 
-            dialogAddURL  = builder.create();
-            if(dialogAddURL.getWindow() != null) {
+            dialogAddURL = builder.create();
+            if (dialogAddURL.getWindow() != null) {
                 dialogAddURL.getWindow().setBackgroundDrawable(new ColorDrawable(0));
             }
 
@@ -411,7 +478,7 @@ public class CreateNoteActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     if (inputURL.getText().toString().trim().isEmpty()) {
                         Toast.makeText(CreateNoteActivity.this, "Enter URL", Toast.LENGTH_SHORT).show();
-                    } else if (!Patterns.WEB_URL.matcher(inputURL.getText().toString()).matches()){
+                    } else if (!Patterns.WEB_URL.matcher(inputURL.getText().toString()).matches()) {
                         Toast.makeText(CreateNoteActivity.this, "Enter valid URL", Toast.LENGTH_SHORT).show();
                     } else {
                         textWebURL.setText(inputURL.getText().toString());

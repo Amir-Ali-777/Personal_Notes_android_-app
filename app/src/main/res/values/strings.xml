@@ -11,4 +11,7 @@
     <string name="enter_url">Enter URL</string>
     <string name="add">ADD</string>
     <string name="cancel_dialog">CANCEL</string>
+    <string name="delete_note">Delete note</string>
+    <string name="are_you_sure_that_you_want_to_delete_this_note">Are you sure that you want to delete this note?</string>
+    <string name="delete_note_a">DELETE NOTE</string>
 </resources>
