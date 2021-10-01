@@ -128,6 +128,21 @@ public class CreateNoteActivity extends AppCompatActivity {
             }
         });
 
+        if (getIntent().getBooleanExtra("isFromQuickActions", false)) {
+            String type = getIntent().getStringExtra("quickActionType");
+            if (type != null) {
+                if (type.equals("image")) {
+                    selectedImagePath = getIntent().getStringExtra("imagePath");
+                    imageNote.setImageBitmap(BitmapFactory.decodeFile(selectedImagePath));
+                    imageNote.setVisibility(View.VISIBLE);
+                    findViewById(R.id.imageRemoveImage).setVisibility(View.VISIBLE);
+                } else if (type.equals("URL")){
+                    textWebURL.setText(getIntent().getStringExtra("URL"));
+                    layoutWebURL.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+
         initMiscellaneous();
         setSubtitleIndicatorColor();
 
@@ -340,7 +355,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     }
 
     private void showDeleteNoteDialog() {
-        if(dialogDeleteNote == null) {
+        if (dialogDeleteNote == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(CreateNoteActivity.this);
             View view = LayoutInflater.from(this).inflate(
                     R.layout.layout_delete_note,
@@ -348,7 +363,7 @@ public class CreateNoteActivity extends AppCompatActivity {
             );
             builder.setView(view);
             dialogDeleteNote = builder.create();
-            if(dialogDeleteNote.getWindow() != null){
+            if (dialogDeleteNote.getWindow() != null) {
                 dialogDeleteNote.getWindow().setBackgroundDrawable(new ColorDrawable());
             }
             view.findViewById(R.id.textDeleteNote).setOnClickListener(new View.OnClickListener() {
@@ -356,7 +371,7 @@ public class CreateNoteActivity extends AppCompatActivity {
                 public void onClick(View view) {
 
                     @SuppressLint("StaticFieldLeak")
-                    class DeleteNoteTask extends AsyncTask<Void, Void, Void>{
+                    class DeleteNoteTask extends AsyncTask<Void, Void, Void> {
 
                         @Override
                         protected Void doInBackground(Void... voids) {
