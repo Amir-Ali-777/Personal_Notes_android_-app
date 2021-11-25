@@ -6,6 +6,7 @@
 3) Recycler view (android X) 
 4) Rounded Image views
 5) Material Design 
+6) Bottom Sheet
 * The main UI looks as shown (shows all the notes added in the staggerred listview with most recent note on the top)
 https://github.com/Amir-Ali-777/Personal_Notes_android_-app/blob/master/My%20notes%20main%20UI.PNG
 * The Notepad (Notes editing UI) is as shown, it has the bootomsheet which is used give different colors to each note, it used to add the image and URL and it also has the option to delete the note.
